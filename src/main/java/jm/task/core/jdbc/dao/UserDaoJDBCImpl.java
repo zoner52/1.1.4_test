@@ -9,14 +9,15 @@ import java.util.List;
 
 
 
-public class UserDaoJDBCImpl extends Util implements UserDao {
+public class UserDaoJDBCImpl  implements UserDao {
     public UserDaoJDBCImpl() {
 
     }
+    Util utilConnect = new Util();
 
     @Override
     public void createUsersTable() {
-        try (Statement st = getConnection().createStatement()) {
+        try (Statement st = utilConnect.getConnection().createStatement()) {
             st.execute("create table if not exists Users (" +
                     "ID bigint primary key auto_increment," +
                     "Name varchar(15) not null," +
@@ -29,7 +30,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
     @Override
     public void dropUsersTable() {
-        try (Statement st = getConnection().createStatement()) {
+        try (Statement st = utilConnect.getConnection().createStatement()) {
             st.execute("drop table if exists Users");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,8 +39,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        String sql = "insert into Users (Name, LastName, Age) values (?, ?, ?)";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (PreparedStatement st = utilConnect.getConnection().prepareStatement("insert into Users (Name, LastName, Age) values (?, ?, ?)")) {
             st.setString(1, name);
             st.setString(2, lastName);
             st.setByte(3, age);
@@ -53,7 +53,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
     @Override
     public void removeUserById(long id) {
         String sql = "delete from Users where ID = ?";
-        try (PreparedStatement st = getConnection().prepareStatement(sql)) {
+        try (PreparedStatement st = utilConnect.getConnection().prepareStatement(sql)) {
             st.setLong(1, id);
             st.executeUpdate();
         } catch (SQLException e) {
@@ -64,7 +64,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
     @Override
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
-        try (Statement st = getConnection().createStatement()) {
+        try (Statement st = utilConnect.getConnection().createStatement()) {
             ResultSet resultSet = st.executeQuery("select * from Users");
             while (resultSet.next()) {
                 User tUser = new User();
@@ -82,7 +82,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        try (Statement st = getConnection().createStatement()) {
+        try (Statement st = utilConnect.getConnection().createStatement()) {
             st.execute("truncate table Users");
         } catch (SQLException e) {
             e.printStackTrace();
