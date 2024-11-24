@@ -82,4 +82,9 @@ public class UserDaoHibernateImpl implements UserDao {
         session.getTransaction().commit();
         session.close();
     }
+
+    @Override
+    public void makeMoreKaif() {
+        System.out.println("EBAT KAIF");
+    }
 }
